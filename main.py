@@ -16,9 +16,13 @@ def previous_week_window():
     start_dt = dt.datetime.combine(start_date, dt.time.min, tzinfo=tz)
     end_dt = dt.datetime.combine(end_date, dt.time.min, tzinfo=tz)
     return start_dt, end_dt
-
+def month_to_date_window(end_dt):
+    start_date = end_dt.date().replace(day=1)
+    start_dt = dt.datetime.combine(start_date, dt.time.min, tzinfo=end_dt.tzinfo)
+    return start_dt, end_dt
 def main():
     start_dt, end_dt = previous_week_window()
+    mtd_start_dt, mtd_end_dt = month_to_date_window(end_dt)
     print(f"Reporting window: {start_dt.isoformat()} through {end_dt.isoformat()} (exclusive)")
 
     print("Fetching Oregon HubSpot activity...")
@@ -29,7 +33,19 @@ def main():
     print("Fetching LeafLink data...")
     leaflink_or, leaflink_nm = fetch_leaflink_data(start_dt, end_dt)
 
-    html = generate_report(hubspot_or, hubspot_nm, leaflink_or, leaflink_nm, start_dt, end_dt)
+    
+    print("Fetching month-to-date LeafLink data...")
+    mtd_leaflink_or, mtd_leaflink_nm = fetch_leaflink_data(mtd_start_dt, mtd_end_dt)
+   html = generate_report(
+    hubspot_or,
+    hubspot_nm,
+    leaflink_or,
+    leaflink_nm,
+    mtd_leaflink_or,
+    mtd_leaflink_nm,
+    start_dt,
+    end_dt,
+)
     preview = Path("report_preview.html")
     preview.write_text(html, encoding="utf-8")
     print(f"Preview written to {preview.resolve()}")
