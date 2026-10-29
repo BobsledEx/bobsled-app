@@ -36,7 +36,7 @@ def _state_section(name, hubspot, leaflink, include_vendor=False):
     return f"""
     <h2>{name}</h2>
     <h3>HubSpot Sales Team Activity</h3>
-    <table><thead><tr><th>Rep</th><th>Calls</th><th>Completed Meetings</th></tr></thead>
+    <table><thead><tr><th>Rep</th><th>Calls</th><th>Meetings Logged</th></tr></thead>
     <tbody>{_activity_rows(hubspot['reps'])}</tbody></table>
     {vendor_html}
     <h3>LeafLink</h3>
