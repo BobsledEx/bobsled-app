@@ -60,9 +60,13 @@ def generate_report(
     display_end = (end_dt - dt.timedelta(days=1)).date()
     total_sales = leaflink_or["completed_sales"] + leaflink_nm["completed_sales"]
     total_collected = leaflink_or["collected_orders"] + leaflink_nm["collected_orders"]
-    mtd_or_sales = mtd_leaflink_or["completed_sales"]
-    mtd_nm_sales = mtd_leaflink_nm["completed_sales"]
-    mtd_total_sales = mtd_or_sales + mtd_nm_sales
+    mtd_or_sold = mtd_leaflink_or["sold_sales"]
+    mtd_nm_sold = mtd_leaflink_nm["sold_sales"]
+    mtd_total_sold = mtd_or_sold + mtd_nm_sold
+
+    mtd_or_completed = mtd_leaflink_or["completed_sales"]
+    mtd_nm_completed = mtd_leaflink_nm["completed_sales"]
+    mtd_total_completed = mtd_or_completed + mtd_nm_completed
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
       body{{font-family:Arial,sans-serif;color:#222;line-height:1.35;max-width:760px;margin:auto;padding:16px}}
       table{{border-collapse:collapse;width:100%;margin-bottom:18px}}
@@ -73,13 +77,18 @@ def generate_report(
     <p><b>Reporting period:</b> {start_dt.date():%B %d, %Y} through {display_end:%B %d, %Y}</p>
     {_state_section('Oregon', hubspot_or, leaflink_or, True)}
     {_state_section('New Mexico', hubspot_nm, leaflink_nm, False)}
-    <h2>Company Totals</h2>
-    <ul><li>Completed-order sales shipped last week: <b>{_money(total_sales)}</b></li>
-        <li>Payments collected last week: <b>{_money(total_collected)}</b></li></ul>
-    <h2>Month-to-Date Outbound Sales</h2>
+    <h2>Month-to-Date Orders Sold</h2>
 <ul>
-    <li>Oregon outbound sales: <b>{_money(mtd_or_sales)}</b></li>
-    <li>New Mexico outbound sales: <b>{_money(mtd_nm_sales)}</b></li>
-    <li>Total outbound sales MTD: <b>{_money(mtd_total_sales)}</b></li>
+    <li>Oregon orders sold: <b>{_money(mtd_or_sold)}</b></li>
+    <li>New Mexico orders sold: <b>{_money(mtd_nm_sold)}</b></li>
+    <li>Total orders sold MTD: <b>{_money(mtd_total_sold)}</b></li>
 </ul>
+
+<h2>Month-to-Date Completed/Shipped Sales</h2>
+<ul>
+    <li>Oregon completed/shipped: <b>{_money(mtd_or_completed)}</b></li>
+    <li>New Mexico completed/shipped: <b>{_money(mtd_nm_completed)}</b></li>
+    <li>Total completed/shipped MTD: <b>{_money(mtd_total_completed)}</b></li>
+</ul>
+ 
     </body></html>"""
