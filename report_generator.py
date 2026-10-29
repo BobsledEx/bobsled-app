@@ -44,14 +44,14 @@ def _state_section(name, hubspot, leaflink, include_vendor=False):
       <li>Completed orders shipped last week: <b>{leaflink['completed_orders']}</b></li>
       <li>Completed-order sales shipped last week: <b>{_money(leaflink['completed_sales'])}</b></li>
       <li>Orders marked paid last week: <b>{leaflink['collected_orders']}</b></li>
-      <li>Payments collected last week: <b>{_money(leaflink['collected'])}</b></li>
+      <li>Payments collected last week: <b>{_money(leaflink['collected_orders'])}</b></li>
     </ul>{notes_html}
     """
 
 def generate_report(hubspot_or, hubspot_nm, leaflink_or, leaflink_nm, start_dt, end_dt):
     display_end = (end_dt - dt.timedelta(days=1)).date()
     total_sales = leaflink_or["completed_sales"] + leaflink_nm["completed_sales"]
-    total_collected = leaflink_or["collected"] + leaflink_nm["collected"]
+    total_collected = leaflink_or["collected_orders"] + leaflink_nm["collected_orders"]
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
       body{{font-family:Arial,sans-serif;color:#222;line-height:1.35;max-width:760px;margin:auto;padding:16px}}
       table{{border-collapse:collapse;width:100%;margin-bottom:18px}}
