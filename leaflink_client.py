@@ -148,8 +148,34 @@ def fetch_leaflink_data(start_dt, end_dt):
     orders_or = [order for order in orders if _seller_id(order) == COMPANY_OR]
     orders_nm = [order for order in orders if _seller_id(order) == COMPANY_NM]
 
-    print(f"LeafLink state split: Oregon={len(orders_or)}, New Mexico={len(orders_nm)}")
+    def print_status_totals(label, state_orders):
+        status_totals = {}
+
+        for order in state_orders:
+            created_date = _parse_date(order.get("created_on"))
+
+            if created_date and start_date <= created_date < end_date:
+                status = _status(order)
+                status_totals[status] = (
+                    status_totals.get(status, Decimal("0"))
+                    + _decimal(order.get("total"))
+                )
+
+        print(
+            f"{label} status totals for {start_date} through {end_date}: "
+            f"{status_totals}"
+        )
+
+    print_status_totals("Oregon", orders_or)
+    print_status_totals("New Mexico", orders_nm)
+
+    print(
+        f"LeafLink state split: Oregon={len(orders_or)}, "
+        f"New Mexico={len(orders_nm)}"
+    )
+
     return (
         _summary(orders_or, start_date, end_date),
         _summary(orders_nm, start_date, end_date),
     )
+    
