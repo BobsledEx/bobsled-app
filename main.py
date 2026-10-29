@@ -53,7 +53,8 @@ def main():
     subject_end = (end_dt - dt.timedelta(days=1)).date()
     subject = f"Bobsled Weekly Sales & Activity Report | {start_dt.date():%b %d} - {subject_end:%b %d, %Y}"
 
-    if DRY_RUN:
+        if DRY_RUN:
+        print(html)
         print("DRY_RUN=true, so no email was sent.")
     else:
         send_email(html, subject)
