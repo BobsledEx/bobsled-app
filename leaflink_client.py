@@ -120,7 +120,7 @@ def _summary(orders, start_date, end_date):
     return {
         "completed_orders": completed_orders,
         "completed_sales": completed_sales,
-        "collected": collected,
+        "collected_orders": collected,
         "notes": [],
     }
 
