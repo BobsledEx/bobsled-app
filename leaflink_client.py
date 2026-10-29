@@ -89,7 +89,7 @@ def _orders_recent(start_date):
         page_results = data.get("results", [])
         output.extend(page_results)
         if page == 1 and page_results:
-        print("LEAFLINK ORDER FIELDS:", sorted(page_results[0].keys()))
+            print("LEAFLINK ORDER FIELDS:", sorted(page_results[0].keys()))
         print(f"LeafLink page {page}: {len(page_results)} orders; {len(output)} total so far.")
 
         next_url = data.get("next")
