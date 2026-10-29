@@ -47,11 +47,22 @@ def _state_section(name, hubspot, leaflink, include_vendor=False):
       <li>Payments collected last week: <b>{_money(leaflink['collected_orders'])}</b></li>
     </ul>{notes_html}
     """
-
-def generate_report(hubspot_or, hubspot_nm, leaflink_or, leaflink_nm, start_dt, end_dt):
+def generate_report(
+    hubspot_or,
+    hubspot_nm,
+    leaflink_or,
+    leaflink_nm,
+    mtd_leaflink_or,
+    mtd_leaflink_nm,
+    start_dt,
+    end_dt,
+):
     display_end = (end_dt - dt.timedelta(days=1)).date()
     total_sales = leaflink_or["completed_sales"] + leaflink_nm["completed_sales"]
     total_collected = leaflink_or["collected_orders"] + leaflink_nm["collected_orders"]
+    mtd_or_sales = mtd_leaflink_or["completed_sales"]
+    mtd_nm_sales = mtd_leaflink_nm["completed_sales"]
+    mtd_total_sales = mtd_or_sales + mtd_nm_sales
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
       body{{font-family:Arial,sans-serif;color:#222;line-height:1.35;max-width:760px;margin:auto;padding:16px}}
       table{{border-collapse:collapse;width:100%;margin-bottom:18px}}
@@ -65,4 +76,10 @@ def generate_report(hubspot_or, hubspot_nm, leaflink_or, leaflink_nm, start_dt, 
     <h2>Company Totals</h2>
     <ul><li>Completed-order sales shipped last week: <b>{_money(total_sales)}</b></li>
         <li>Payments collected last week: <b>{_money(total_collected)}</b></li></ul>
+    <h2>Month-to-Date Outbound Sales</h2>
+<ul>
+    <li>Oregon outbound sales: <b>{_money(mtd_or_sales)}</b></li>
+    <li>New Mexico outbound sales: <b>{_money(mtd_nm_sales)}</b></li>
+    <li>Total outbound sales MTD: <b>{_money(mtd_total_sales)}</b></li>
+</ul>
     </body></html>"""
