@@ -1,100 +1,47 @@
-import os
-import requests
-import datetime
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import datetime as dt
+from pathlib import Path
+from zoneinfo import ZoneInfo
+from config import REPORT_TIMEZONE, DRY_RUN
+from hubspot_client import fetch_hubspot_data
+from leaflink_client import fetch_leaflink_data
+from report_generator import generate_report
+from email_sender import send_email
 
-# ENV VARS
-HUBSPOT_OR = os.getenv("HUBSPOT_API_KEY_OR")
-HUBSPOT_NM = os.getenv("HUBSPOT_API_KEY_NM")
-SENDGRID_KEY = os.getenv("SENDGRID_API_KEY")
-EMAIL_TO = os.getenv("EMAIL_TO", "crystal@bobsledextracts.com")
-
-# Date range (last 12 months)
-today = datetime.date.today()
-one_year_ago = today - datetime.timedelta(days=365)
-
-def get_hubspot_data(api_key, region_name):
-    url = "https://api.hubapi.com/crm/v3/objects/contacts"
-    params = {
-        "hapikey": api_key,
-        "limit": 100,
-        "properties": "firstname,lastname,email,createdate,lastmodifieddate"
-    }
-
-    r = requests.get(url, params=params)
-    data = r.json()
-
-    new_accounts = []
-    updated_accounts = []
-
-    for item in data.get("results", []):
-        created = item.get("properties", {}).get("createdate")
-        updated = item.get("properties", {}).get("lastmodifieddate")
-
-        if created:
-            created_date = datetime.datetime.fromisoformat(created.replace("Z", "+00:00")).date()
-            if created_date >= one_year_ago:
-                new_accounts.append(item)
-
-        if updated:
-            updated_date = datetime.datetime.fromisoformat(updated.replace("Z", "+00:00")).date()
-            if updated_date >= one_year_ago:
-                updated_accounts.append(item)
-
-    return {
-        "region": region_name,
-        "new_accounts": len(new_accounts),
-        "updated_accounts": len(updated_accounts)
-    }
-
-def build_email(or_data, nm_data):
-    html = f"""
-    <h2>Bobsled Weekly Report – Last 12 Months</h2>
-
-    <h3>Oregon</h3>
-    <p><b>New Accounts:</b> {or_data['new_accounts']}</p>
-    <p><b>Updated Accounts:</b> {or_data['updated_accounts']}</p>
-
-    <hr>
-
-    <h3>New Mexico</h3>
-    <p><b>New Accounts:</b> {nm_data['new_accounts']}</p>
-    <p><b>Updated Accounts:</b> {nm_data['updated_accounts']}</p>
-
-    <br><br>
-    <p>This report was generated automatically by your Bobsled HubSpot Bot.</p>
-    """
-
-    return html
-
-def send_email(html_content):
-    message = Mail(
-        from_email="reports@bobsledextracts.com",
-        to_emails=EMAIL_TO,
-        subject="Bobsled – Weekly HubSpot Report",
-        html_content=html_content
-    )
-
-    try:
-        sg = SendGridAPIClient(SENDGRID_KEY)
-        sg.send(message)
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", e)
+def previous_week_window():
+    tz = ZoneInfo(REPORT_TIMEZONE)
+    now = dt.datetime.now(tz)
+    this_monday = (now - dt.timedelta(days=now.weekday())).date()
+    start_date = this_monday - dt.timedelta(days=7)
+    end_date = this_monday
+    start_dt = dt.datetime.combine(start_date, dt.time.min, tzinfo=tz)
+    end_dt = dt.datetime.combine(end_date, dt.time.min, tzinfo=tz)
+    return start_dt, end_dt
 
 def main():
-    print("Fetching HubSpot data...")
+    start_dt, end_dt = previous_week_window()
+    print(f"Reporting window: {start_dt.isoformat()} through {end_dt.isoformat()} (exclusive)")
 
-    or_data = get_hubspot_data(HUBSPOT_OR, "Oregon")
-    nm_data = get_hubspot_data(HUBSPOT_NM, "New Mexico")
+    print("Fetching Oregon HubSpot activity...")
+    hubspot_or = fetch_hubspot_data("OR", start_dt, end_dt)
+    print("Fetching New Mexico HubSpot activity...")
+    hubspot_nm = fetch_hubspot_data("NM", start_dt, end_dt)
 
-    email_html = build_email(or_data, nm_data)
+    print("Fetching LeafLink data...")
+    leaflink_or, leaflink_nm = fetch_leaflink_data(start_dt, end_dt)
 
-    print("Sending email...")
-    send_email(email_html)
+    html = generate_report(hubspot_or, hubspot_nm, leaflink_or, leaflink_nm, start_dt, end_dt)
+    preview = Path("report_preview.html")
+    preview.write_text(html, encoding="utf-8")
+    print(f"Preview written to {preview.resolve()}")
 
-    print("Done.")
+    subject_end = (end_dt - dt.timedelta(days=1)).date()
+    subject = f"Bobsled Weekly Sales & Activity Report | {start_dt.date():%b %d} - {subject_end:%b %d, %Y}"
+
+    if DRY_RUN:
+        print("DRY_RUN=true, so no email was sent.")
+    else:
+        send_email(html, subject)
+        print("Email sent.")
 
 if __name__ == "__main__":
     main()
