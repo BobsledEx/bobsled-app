@@ -36,7 +36,7 @@ def main():
     
     print("Fetching month-to-date LeafLink data...")
     mtd_leaflink_or, mtd_leaflink_nm = fetch_leaflink_data(mtd_start_dt, mtd_end_dt)
-   html = generate_report(
+    html = generate_report(
     hubspot_or,
     hubspot_nm,
     leaflink_or,
