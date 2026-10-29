@@ -90,9 +90,7 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         if key in allowed:
             activity[allowed[key]]["calls"] += 1
 
-    meeting_filters = date_filters + [
-        {"propertyName": "hs_meeting_outcome", "operator": "EQ", "value": "completed"}
-    ]
+   meeting_filters = date_filters
     meetings = _search_all(
         token, "meetings", meeting_filters,
         ["hubspot_owner_id", "hs_timestamp", "hs_meeting_outcome"]
