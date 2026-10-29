@@ -116,8 +116,9 @@ def _summary(orders, start_date, end_date):
             and created_date
             and start_date <= created_date < end_date
         ):
-                sold_orders += 1
+            sold_orders += 1
             sold_sales += _decimal(order.get("total"))
+
         ship_date = _parse_date(order.get("ship_date"))
         if (
             status in {"complete", "completed"}
