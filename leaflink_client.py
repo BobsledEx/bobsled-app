@@ -104,11 +104,27 @@ def _summary(orders, start_date, end_date):
     completed_orders = 0
     completed_sales = Decimal("0")
     collected = Decimal("0")
+    sold_orders = 0
+    sold_sales = Decimal("0")
 
     for order in orders:
+        created_date = _parse_date(order.get("created_on"))
+        status = _status(order)
+
+        if (
+            status not in {"canceled", "cancelled", "rejected"}
+            and created_date
+            and start_date <= created_date < end_date
+        ):
+            sold_orders += 1
+            sold_sales += (
+                _decimal(order.get("total"))
+                - _decimal(order.get("tax_amount"))
+            )
+
         ship_date = _parse_date(order.get("ship_date"))
         if (
-            _status(order) in {"complete", "completed"}
+            status in {"complete", "completed"}
             and ship_date
             and start_date <= ship_date < end_date
         ):
@@ -120,13 +136,13 @@ def _summary(orders, start_date, end_date):
             collected += _decimal(order.get("total"))
 
     return {
+        "sold_orders": sold_orders,
+        "sold_sales": sold_sales,
         "completed_orders": completed_orders,
         "completed_sales": completed_sales,
         "collected_orders": collected,
         "notes": [],
     }
-
-
 def fetch_leaflink_data(start_dt, end_dt):
     start_date = start_dt.date()
     end_date = end_dt.date()
