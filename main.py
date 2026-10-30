@@ -17,8 +17,12 @@ def previous_week_window():
     end_dt = dt.datetime.combine(end_date, dt.time.min, tzinfo=tz)
     return start_dt, end_dt
 def month_to_date_window(end_dt):
-    start_date = end_dt.date().replace(day=1)
-    start_dt = dt.datetime.combine(start_date, dt.time.min, tzinfo=end_dt.tzinfo)
+    tz = end_dt.tzinfo
+    today = dt.datetime.now(tz).date()
+    start_date = today.replace(day=1)
+    end_date = today + dt.timedelta(days=1)
+    start_dt = dt.datetime.combine(start_date, dt.time.min, tzinfo=tz)
+    end_dt = dt.datetime.combine(end_date, dt.time.min, tzinfo=tz)
     return start_dt, end_dt
 def main():
     start_dt, end_dt = previous_week_window()
