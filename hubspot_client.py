@@ -152,6 +152,7 @@ def fetch_hubspot_data(region, start_dt, end_dt):
             tinctures = _as_int(p.get("tincture"))
             calculated = carts + dabs + tinctures
             entered = _as_int(p.get("total_units_sold"))
+            print("VENDOR TOTAL DEBUG:", item.get("id"), "calculated=", calculated, "entered=", entered, "difference=", entered - calculated)
             vendor["carts"] += carts
             vendor["dabs"] += dabs
             vendor["tinctures"] += tinctures
