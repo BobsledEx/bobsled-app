@@ -143,6 +143,7 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         }
         for item in marygrace_tickets:
             p = item.get("properties", {})
+            print("VENDOR FIELDS DEBUG:", item.get("id"), p)
             carts = sum(_as_int(p.get(k)) for k in [
                 "black_carts", "blendz_cart", "cured_carts", "live_cart"
             ])
