@@ -117,11 +117,11 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         ]
         tickets = _search_all(token, "tickets", ticket_filters, VENDOR_PROPERTIES)
 
-       marygrace_tickets = []
+        marygrace_tickets = []
 
-       for item in tickets:
-        owner_id = str(item.get("properties", {}).get("hubspot_owner_id") or "")
-        print(
+        for item in tickets:
+         owner_id = str(item.get("properties", {}).get("hubspot_owner_id") or "")
+         print(
             "VENDOR DEBUG:",
             item.get("id"),
             "owner_id=", owner_id,
@@ -129,8 +129,8 @@ def fetch_hubspot_data(region, start_dt, end_dt):
             "event_date=", item.get("properties", {}).get("event_date")
         )
 
-        if _normalize(owner_names.get(owner_id, owner_id)) == _normalize(BRAND_AMBASSADOR):
-            marygrace_tickets.append(item)
+         if _normalize(owner_names.get(owner_id, owner_id)) == _normalize(BRAND_AMBASSADOR):
+             marygrace_tickets.append(item)
         vendor = {
             "name": BRAND_AMBASSADOR,
             "vendor_days": len(marygrace_tickets),
