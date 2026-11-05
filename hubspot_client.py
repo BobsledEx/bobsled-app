@@ -121,14 +121,7 @@ def fetch_hubspot_data(region, start_dt, end_dt):
 
         for item in tickets:
          owner_id = str(item.get("properties", {}).get("hubspot_owner_id") or "")
-         print(
-            "VENDOR DEBUG:",
-            item.get("id"),
-            "owner_id=", owner_id,
-            "owner_name=", owner_names.get(owner_id, owner_id),
-            "event_date=", item.get("properties", {}).get("event_date")
-        )
-
+         
          if _normalize(owner_names.get(owner_id, owner_id)) == _normalize(BRAND_AMBASSADOR):
              marygrace_tickets.append(item)
         vendor = {
@@ -143,7 +136,6 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         }
         for item in marygrace_tickets:
             p = item.get("properties", {})
-            print("VENDOR FIELDS DEBUG:", item.get("id"), p)
             carts = sum(_as_int(p.get(k)) for k in [
                 "black_carts", "blendz_cart", "cured_carts", "live_carts"
             ])
@@ -153,7 +145,6 @@ def fetch_hubspot_data(region, start_dt, end_dt):
             tinctures = _as_int(p.get("tincture"))
             calculated = carts + dabs + tinctures
             entered = _as_int(p.get("total_units_sold"))
-            print("VENDOR TOTAL DEBUG:", item.get("id"), "calculated=", calculated, "entered=", entered, "difference=", entered - calculated)
             vendor["carts"] += carts
             vendor["dabs"] += dabs
             vendor["tinctures"] += tinctures
