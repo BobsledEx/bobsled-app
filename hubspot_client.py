@@ -10,7 +10,7 @@ EXPECTED_REPS = {
 }
 BRAND_AMBASSADOR = "MaryGrace Francone"
 VENDOR_PROPERTIES = [
-    "event_date", "black_carts", "blendz_cart", "cured_carts", "live_cart",
+    "event_date", "black_carts", "blendz_cart", "cured_carts", "live_carts",
     "cured_resin_1g", "cured_resin_2g", "live_resin_1g", "live_resin_2g",
     "tincture", "total_units_sold", "hubspot_owner_id"
 ]
@@ -145,7 +145,7 @@ def fetch_hubspot_data(region, start_dt, end_dt):
             p = item.get("properties", {})
             print("VENDOR FIELDS DEBUG:", item.get("id"), p)
             carts = sum(_as_int(p.get(k)) for k in [
-                "black_carts", "blendz_cart", "cured_carts", "live_cart"
+                "black_carts", "blendz_cart", "cured_carts", "live_carts"
             ])
             dabs = sum(_as_int(p.get(k)) for k in [
                 "cured_resin_1g", "cured_resin_2g", "live_resin_1g", "live_resin_2g"
