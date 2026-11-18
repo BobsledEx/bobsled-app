@@ -107,8 +107,8 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         for name in EXPECTED_REPS[region]
     ]
 
-        vendor = None
-        if region == "OR":
+    vendor = None
+    if region == "OR":
         start_day = dt.datetime.combine(start_dt.date(), dt.time.min, tzinfo=dt.timezone.utc)
         end_day = dt.datetime.combine(end_dt.date(), dt.time.min, tzinfo=dt.timezone.utc)
 
