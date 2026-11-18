@@ -107,23 +107,20 @@ def fetch_hubspot_data(region, start_dt, end_dt):
         for name in EXPECTED_REPS[region]
     ]
 
-    vendor = None
-    if region == "OR":
+        vendor = None
+        if region == "OR":
         start_day = dt.datetime.combine(start_dt.date(), dt.time.min, tzinfo=dt.timezone.utc)
         end_day = dt.datetime.combine(end_dt.date(), dt.time.min, tzinfo=dt.timezone.utc)
+
         ticket_filters = [
             {"propertyName": "event_date", "operator": "GTE", "value": _ms(start_day)},
             {"propertyName": "event_date", "operator": "LT", "value": _ms(end_day)},
         ]
+
         tickets = _search_all(token, "tickets", ticket_filters, VENDOR_PROPERTIES)
 
-        marygrace_tickets = []
-
-        for item in tickets:
-         owner_id = str(item.get("properties", {}).get("hubspot_owner_id") or "")
-         
-         if _normalize(owner_names.get(owner_id, owner_id)) == _normalize(BRAND_AMBASSADOR):
-             marygrace_tickets.append(item)
+        marygrace_tickets = tickets
+       
         vendor = {
             "name": BRAND_AMBASSADOR,
             "vendor_days": len(marygrace_tickets),
