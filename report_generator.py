@@ -67,6 +67,10 @@ def generate_report(
     mtd_or_completed = mtd_leaflink_or["completed_sales"]
     mtd_nm_completed = mtd_leaflink_nm["completed_sales"]
     mtd_total_completed = mtd_or_completed + mtd_nm_completed
+
+    mtd_or_paid = mtd_leaflink_or["collected_orders"]
+    mtd_nm_paid = mtd_leaflink_nm["collected_orders"]
+    mtd_total_paid = mtd_or_paid + mtd_nm_paid
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
       body{{font-family:Arial,sans-serif;color:#222;line-height:1.35;max-width:760px;margin:auto;padding:16px}}
       table{{border-collapse:collapse;width:100%;margin-bottom:18px}}
@@ -89,6 +93,12 @@ def generate_report(
     <li>Oregon completed/shipped: <b>{_money(mtd_or_completed)}</b></li>
     <li>New Mexico completed/shipped: <b>{_money(mtd_nm_completed)}</b></li>
     <li>Total completed/shipped MTD: <b>{_money(mtd_total_completed)}</b></li>
+</ul>
+<h2>Month-to-Date Paid</h2>
+<ul>
+    <li>Oregon orders paid: <b>{_money(mtd_or_paid)}</b></li>
+    <li>New Mexico orders paid: <b>{_money(mtd_nm_paid)}</b></li>
+    <li>Total orders paid MTD: <b>{_money(mtd_total_paid)}</b></li>
 </ul>
  
     </body></html>"""
