@@ -92,6 +92,6 @@ def generate_report(
     <li>New Mexico completed/shipped: <b>{_money(mtd_nm_completed)}</b></li>
     <li>Total completed/shipped MTD: <b>{_money(mtd_total_completed)}</b></li>
 </ul>
-<h2>Month-to-Date Paid</h2>
-<ul>
+    </body></html>"""
+
     
