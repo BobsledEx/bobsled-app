@@ -43,7 +43,7 @@ def _state_section(name, hubspot, leaflink, include_vendor=False):
     <ul>
       <li>Completed orders shipped last week: <b>{leaflink['completed_orders']}</b></li>
       <li>Completed-order sales shipped last week: <b>{_money(leaflink['completed_sales'])}</b></li>
-      <li>Value of orders marked paid last week: <b>{_money(leaflink['collected_orders'])}</b></li>
+      
      
     </ul>{notes_html}
     """
@@ -68,9 +68,7 @@ def generate_report(
     mtd_nm_completed = mtd_leaflink_nm["completed_sales"]
     mtd_total_completed = mtd_or_completed + mtd_nm_completed
 
-    mtd_or_paid = mtd_leaflink_or["collected_orders"]
-    mtd_nm_paid = mtd_leaflink_nm["collected_orders"]
-    mtd_total_paid = mtd_or_paid + mtd_nm_paid
+    
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
       body{{font-family:Arial,sans-serif;color:#222;line-height:1.35;max-width:760px;margin:auto;padding:16px}}
       table{{border-collapse:collapse;width:100%;margin-bottom:18px}}
@@ -96,9 +94,4 @@ def generate_report(
 </ul>
 <h2>Month-to-Date Paid</h2>
 <ul>
-    <li>Oregon orders paid: <b>{_money(mtd_or_paid)}</b></li>
-    <li>New Mexico orders paid: <b>{_money(mtd_nm_paid)}</b></li>
-    <li>Total orders paid MTD: <b>{_money(mtd_total_paid)}</b></li>
-</ul>
- 
-    </body></html>"""
+    
